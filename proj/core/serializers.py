@@ -16,3 +16,8 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model=models.Order
         fields=('id','date','order_by','product')
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.User
+        fields = ('id','role','email','name','last_name','address','phone_number')         

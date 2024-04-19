@@ -156,3 +156,57 @@ class OrderApiView(APIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST
                 )
+            
+
+
+class UserApiView(APIView):
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserSerializer
+
+    def get(self,request,pk=None):
+        if pk:
+            try:
+                user = models.User.objects.get(pk=pk)
+            except:
+                return Response(
+                    {
+                        'message':'not found'
+                    },
+                    status=status.HTTP_404_NOT_FOUND
+                )   
+            serializer = serializers.UserSerializer(user)
+            return Response(serializer.data)     
+
+        else:
+
+            user = models.User.objects.all()
+            serializer = serializers.UserSerializer(user,many=True)
+            return Response(serializer.data)   
+        
+    def post(self,request,pk=None):
+        serializer = serializers.UserSerializer(data=request.data)
+        if pk:
+            return Response(
+                {
+                    'message':'bad request'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            ) 
+        else:
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        'meassage' : 'User Created succesfully',
+                        'data': serializer.data
+                    },
+                    status=status.HTTP_201_CREATED
+                )
+            else:
+                return Response(
+                    {
+                        'message':'User failed to create',
+                        'error': serializer.errors
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
